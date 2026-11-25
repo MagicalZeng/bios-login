@@ -6,20 +6,28 @@
   <meta name="color-scheme" content="light">
   <meta name="referrer" content="no-referrer">
   <title>员工登录 · BIOS 3.0</title>
+  <link rel="icon" type="image/png" href="./bios-icon.png">
+  <link rel="apple-touch-icon" href="./bios-icon.png">
   <link rel="stylesheet" href="./base.css">
   <link rel="stylesheet" href="./login.css">
+  <script type="module" src="./ribbons.js"></script>
   <script defer src="./login.js"></script>
 </head>
 <body class="login-page">
   <header class="topbar">
-    <span class="brand"><i class="brand-mark" aria-hidden="true"><b></b><b></b><b></b></i> BIOS <strong>3.0</strong></span>
-    <button type="button" class="quiet" id="help-open">登录帮助</button>
+    <img class="brand-logo" src="./bios-logo.png" alt="BIOS Collective">
+    <button type="button" class="quiet" id="help-open"><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#help"/></svg>登录帮助</button>
   </header>
   <main class="login-shell">
     <section class="intro">
-      <div class="intro-text"><h1>员工访问门户</h1><p>在一个工作台管理你的设备、流量和客户端版本。</p></div>
-      <div class="sculpture" aria-hidden="true"><div class="halo"></div><div class="tiles"><i class="tile tile-a"></i><i class="tile tile-b"></i><i class="tile tile-c"></i><i class="tile tile-d"><b class="cutout"></b></i></div></div>
-      <span class="intro-platforms">Windows <span aria-hidden="true">/</span> macOS</span>
+      <bios-ribbons aria-hidden="true"></bios-ribbons>
+      <div class="intro-text">
+        <h1>员工访问门户</h1>
+        <p>在一个工作台管理你的设备、流量和客户端版本。</p>
+      </div>
+      <div class="intro-platforms">
+        <span><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#windows"/></svg>Windows</span><span><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#mac"/></svg>macOS</span>
+      </div>
     </section>
     <section class="access-panel" aria-labelledby="form-title">
       <h2 id="form-title">登录工作台</h2>
@@ -29,12 +37,21 @@
     </section>
   </main>
   <footer class="login-footer"><span>BIOS 3.0</span><span>门户版本 1.01</span></footer>
-  <dialog id="help" aria-labelledby="help-title"><div class="dialog-head"><h2 id="help-title">登录帮助</h2><button type="button" class="quiet close-help" aria-label="关闭帮助">关闭</button></div><p>输入管理员分配的昵称、账号和密码。昵称需与登记信息一致。</p><p>每个账号最多绑定两台设备。浏览器资料用于识别当前设备，清除资料或更换浏览器后可能需要重新绑定。</p><p>名额已满时，请通过已登录设备在「设备」中解绑旧设备，或联系管理员。</p></dialog>
+  <dialog id="help" aria-labelledby="help-title">
+    <div class="dialog-head"><h2 id="help-title">登录帮助</h2><button type="button" class="quiet close-help" aria-label="关闭帮助">关闭</button></div>
+    <p>输入管理员分配的昵称、账号和密码。昵称需与登记信息一致。</p>
+    <p>每个账号最多绑定两台设备。浏览器资料用于识别当前设备，清除资料或更换浏览器后可能需要重新绑定。</p>
+    <p>名额已满时，请通过已登录设备在「我的设备」中解绑旧设备，或联系管理员。</p>
+  </dialog>
   <template id="login-template"><form id="login-form" method="post" action="/api/login">
-    <label for="nickname">昵称</label><input id="nickname" name="nickname" required maxlength="64" autocomplete="nickname">
-    <label for="account">账号</label><input id="account" name="account" required maxlength="100" autocomplete="username" autocapitalize="none" spellcheck="false">
-    <label for="password">密码</label><div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="128"><button type="button" class="password-toggle" aria-label="显示密码" aria-pressed="false">显示</button></div>
-    <p class="error" id="login-error" role="alert"></p><button type="submit" class="primary full">登录工作台 <span aria-hidden="true">→</span></button>
+    <label for="nickname">昵称</label>
+    <div class="input-wrap"><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#user"/></svg><input id="nickname" name="nickname" required maxlength="64" autocomplete="nickname"></div>
+    <label for="account">账号</label>
+    <div class="input-wrap"><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#account"/></svg><input id="account" name="account" required maxlength="100" autocomplete="username" autocapitalize="none" spellcheck="false"></div>
+    <label for="password">密码</label>
+    <div class="input-wrap password-wrap"><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#lock"/></svg><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="128"><button type="button" class="password-toggle" aria-label="显示密码" aria-pressed="false">显示</button></div>
+    <p class="error" id="login-error" role="alert"></p>
+    <button type="submit" class="primary full">登录工作台 <svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#arrow"/></svg></button>
   </form></template>
 </body>
 </html>
