@@ -3,6 +3,8 @@
 const entry = document.getElementById("entry");
 const note = document.getElementById("entry-note");
 const help = document.getElementById("help");
+const candidateVersion = new URLSearchParams(location.search).get("client_version");
+const launcherVersion = /^[1-9]\d{0,3}\.\d{2}$/.test(candidateVersion || "") ? candidateVersion : undefined;
 document.getElementById("help-open").addEventListener("click", () => help.showModal());
 help.querySelector(".close-help").addEventListener("click", () => help.close());
 
@@ -54,7 +56,7 @@ function mountLogin() {
         method:"POST", mode:"same-origin", credentials:"same-origin", redirect:"error",
         headers:{"Content-Type":"application/json"}, cache:"no-store",
         body:JSON.stringify({nickname:form.elements.nickname.value.trim(), account:form.elements.account.value.trim(),
-          password:password.value, device_id:id, device_name:name + " 设备", platform:os})
+          password:password.value, device_id:id, device_name:name + " 设备", platform:os, version:launcherVersion})
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "登录失败，请重试。");
@@ -94,6 +96,7 @@ async function start() {
     const response = await fetch("./config.json", {mode:"same-origin",redirect:"error",cache:"no-store"});
     const target = response.ok && handoffOrigin((await response.json()).service_origin);
     if (target) {
+      if (launcherVersion) target.searchParams.set("client_version",launcherVersion);
       note.textContent = "前往公司登录服务，验证身份后进入工作台。";
       const go = document.createElement("a");
       go.className = "primary full"; go.href = target.href; go.rel = "noreferrer"; go.textContent = "前往安全登录 →";

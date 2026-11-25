@@ -29,7 +29,7 @@
     </section>
   </main>
   <footer class="login-footer"><span>BIOS 3.0</span><span>门户版本 1.01</span></footer>
-  <dialog id="help"><div class="dialog-head"><h2>登录帮助</h2><button type="button" class="quiet close-help" aria-label="关闭帮助">关闭</button></div><p>输入管理员分配的昵称、账号和密码。请保留昵称与账号中的原始大小写。</p><p>每个账号最多绑定两台设备。浏览器资料用于识别当前设备，清除资料或更换浏览器后可能需要重新绑定。</p><p>名额已满时，请通过已登录设备在「设备」中解绑旧设备，或联系管理员。</p></dialog>
+  <dialog id="help" aria-labelledby="help-title"><div class="dialog-head"><h2 id="help-title">登录帮助</h2><button type="button" class="quiet close-help" aria-label="关闭帮助">关闭</button></div><p>输入管理员分配的昵称、账号和密码。昵称需与登记信息一致。</p><p>每个账号最多绑定两台设备。浏览器资料用于识别当前设备，清除资料或更换浏览器后可能需要重新绑定。</p><p>名额已满时，请通过已登录设备在「设备」中解绑旧设备，或联系管理员。</p></dialog>
   <template id="login-template"><form id="login-form" method="post" action="/api/login">
     <label for="nickname">昵称</label><input id="nickname" name="nickname" required maxlength="64" autocomplete="nickname">
     <label for="account">账号</label><input id="account" name="account" required maxlength="100" autocomplete="username" autocapitalize="none" spellcheck="false">
