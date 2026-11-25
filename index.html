@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
   <meta name="referrer" content="no-referrer">
-  <title>员工登录 · BIOS 3.0</title>
+  <title>工作台登录 · BIOS 3.0</title>
   <link rel="icon" type="image/png" href="./bios-icon.png">
   <link rel="apple-touch-icon" href="./bios-icon.png">
   <link rel="stylesheet" href="./base.css">
   <link rel="stylesheet" href="./login.css">
-  <script type="module" src="./ribbons.js"></script>
   <script defer src="./login.js"></script>
 </head>
 <body class="login-page">
@@ -19,24 +18,27 @@
     <button type="button" class="quiet" id="help-open"><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#help"/></svg>登录帮助</button>
   </header>
   <main class="login-shell">
-    <section class="intro">
-      <bios-ribbons aria-hidden="true"></bios-ribbons>
-      <div class="intro-text">
-        <h1>员工访问门户</h1>
-        <p>在一个工作台管理你的设备、流量和客户端版本。</p>
+    <section class="intro" aria-labelledby="product-name">
+      <h1 id="product-name"><span class="product-type">BIOS <small>3.0</small></span><span class="product-name">网络工作台</span></h1>
+      <div class="glass-sculpture" aria-hidden="true">
+        <div class="glass-shadow"></div>
+        <div class="glass-loop loop-far"></div>
+        <div class="glass-loop loop-near"></div>
       </div>
-      <div class="intro-platforms">
-        <span><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#windows"/></svg>Windows</span><span><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#mac"/></svg>macOS</span>
-      </div>
+      <p class="intro-description">管理设备、查看流量与客户端版本。</p>
     </section>
     <section class="access-panel" aria-labelledby="form-title">
       <h2 id="form-title">登录工作台</h2>
       <p class="muted" id="entry-note" role="status">正在检查登录服务…</p>
       <div id="entry"></div>
       <noscript><p>请启用 JavaScript 后重新打开登录页面。</p></noscript>
+      <div class="device-info" id="device-info" hidden>
+        <svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#devices"/></svg>
+        <span>本机系统</span><strong id="device-platform"></strong>
+      </div>
     </section>
   </main>
-  <footer class="login-footer"><span>BIOS 3.0</span><span>门户版本 1.01</span></footer>
+  <footer class="login-footer"><span>BIOS Collective</span><span>门户版本 1.01</span></footer>
   <dialog id="help" aria-labelledby="help-title">
     <div class="dialog-head"><h2 id="help-title">登录帮助</h2><button type="button" class="quiet close-help" aria-label="关闭帮助">关闭</button></div>
     <p>输入管理员分配的昵称、账号和密码。昵称需与登记信息一致。</p>

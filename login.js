@@ -18,6 +18,8 @@ function platform() {
   return ["other", "浏览器"];
 }
 
+const [os, platformName] = platform();
+
 function deviceId() {
   const key = "bios3.device";
   let id = localStorage.getItem(key);
@@ -29,8 +31,7 @@ function deviceId() {
 }
 
 function mountLogin() {
-  const [os, name] = platform();
-  note.textContent = "使用公司分配的昵称、账号和密码登录。";
+  note.textContent = "员工与管理员使用各自的账号登录。";
   entry.replaceChildren(document.getElementById("login-template").content.cloneNode(true));
   const form = document.getElementById("login-form");
   const password = form.elements.password;
@@ -56,7 +57,7 @@ function mountLogin() {
         method:"POST", mode:"same-origin", credentials:"same-origin", redirect:"error",
         headers:{"Content-Type":"application/json"}, cache:"no-store",
         body:JSON.stringify({nickname:form.elements.nickname.value.trim(), account:form.elements.account.value.trim(),
-          password:password.value, device_id:id, device_name:name + " 设备", platform:os, version:launcherVersion})
+          password:password.value, device_id:id, device_name:platformName + " 设备", platform:os, version:launcherVersion})
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "登录失败，请重试。");
@@ -80,6 +81,11 @@ function handoffOrigin(value) {
 }
 
 async function start() {
+  const device = document.getElementById("device-info");
+  if (os !== "other") {
+    document.getElementById("device-platform").textContent = platformName;
+    device.hidden = false;
+  }
   const pages = /(^|\.)github\.io$/i.test(location.hostname);
   const local = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
   if (!pages && (location.protocol === "https:" || (location.protocol === "http:" && local))) {
