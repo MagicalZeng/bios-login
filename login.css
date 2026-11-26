@@ -4,6 +4,7 @@
   --accent: #334650;
   display: grid;
   place-items: center;
+  min-width: 54rem;
   min-height: 100svh;
   padding: clamp(12px, 3vw, 56px);
   background: radial-gradient(ellipse at 8% 76%, #dae1e8, transparent 54%),
@@ -151,34 +152,6 @@
 .device-info .icon { width: 17px; height: 17px; }
 .device-info strong { margin-left: auto; color: #36393b; font-weight: 560; }
 .access-panel footer { justify-self: end; color: #6d6d6b; font-size: .72rem; }
-@media (min-width: 711px) and (max-width: 960px) {
-  .login-page { padding: 14px; }
-  .login-shell { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
-  .access-panel { padding-inline: 24px; }
-  .intro { padding: clamp(24px,3.3vw,32px); }
-}
-@media (max-width: 710px) {
-  .login-page { padding: 8px; }
-  .login-shell { grid-template-columns: minmax(0,1fr); min-height: 0; padding: 5px; border-radius: 24px; }
-  .intro { min-height: 208px; padding: 22px 21px 18px; border-radius: 19px; }
-  .intro h1 { margin-bottom: 6px; font-size: 1.95rem; line-height: 1.23; }
-  .intro p { font-size: .81rem; max-width: 16.5em; }
-  .intro bios-ribbons { inset: 18% -14% -2% 9%; }
-  .intro-platforms { margin-top: 22px; gap: 6px; }
-  .intro-platforms span { padding: 3px 8px; font-size: .68rem; gap: 5px; }
-  .intro-platforms .icon { width: 12px; height: 12px; }
-  .access-panel { padding: 16px clamp(15px,5vw,30px) 12px; }
-  .utilities, .credentials { width: min(100%,392px); }
-  .utilities .brand-logo { width: 119px; }
-  .credentials { margin: 14px 0 24px; }
-  #entry-note { margin: 8px 0 20px; font-size: .86rem; }
-  .access-panel footer { justify-self: center; }
-}
-@media (max-width: 360px) {
-  .intro { min-height: 188px; padding-inline: 16px; }
-  .access-panel { padding-inline: 12px; }
-  .credentials h2 { font-size: 1.58rem; }
-}
 @media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
   .intro-platforms span { background: #192630; }
   .form-field input, .device-info { border-color: #696b6d; }
