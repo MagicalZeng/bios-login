@@ -30,11 +30,51 @@ function deviceId() {
   return id;
 }
 
+const desktopEntry = "请从桌面重新打开「BIOS 网络工作台」或「BIOS Employee」，在新窗口登录。";
+const reopenDesk = "本机 BIOS 工作台已失去连接。" + desktopEntry;
+
+function isDesktopBridge() {
+  return location.protocol === "http:" && location.hostname === "127.0.0.1" && !!location.port &&
+    navigator.serviceWorker?.controller?.scriptURL === location.origin + "/__bios/worker.js";
+}
+
+// Windows 1.03 and Mac 1.02 already serve this small, capability-protected
+// page locally. Reading it keeps the bridge alive without contacting the VPN.
+function monitorDesktopLogin(error) {
+  if (!isDesktopBridge()) return null;
+  let pending;
+  async function check() {
+    if (!isDesktopBridge()) return false;
+    if (pending) return pending;
+    pending = (async () => {
+      try {
+        const r = await fetch("/__bios/recovery", {mode:"same-origin", credentials:"omit",
+          redirect:"error", cache:"no-store", signal:AbortSignal.timeout(4000)});
+        return r.ok && r.headers.get("Content-Type")?.includes("text/html") &&
+          (await r.text()).includes('src="/__bios/recovery.js"');
+      } catch { return false; }
+    })();
+    try { return await pending; } finally { pending = null; }
+  }
+  async function refresh() {
+    if (document.hidden) return;
+    if (!await check()) error.textContent = reopenDesk;
+    else if (error.textContent === reopenDesk) error.textContent = "";
+  }
+  setInterval(refresh, 4 * 60 * 1000);
+  document.addEventListener("visibilitychange", refresh);
+  window.addEventListener("focus", refresh);
+  window.addEventListener("pageshow", event => { if (event.persisted) refresh(); });
+  return check;
+}
+
 function mountLogin() {
   note.textContent = "员工与管理员使用各自的账号登录。";
   entry.replaceChildren(document.getElementById("login-template").content.cloneNode(true));
   const form = document.getElementById("login-form");
   const password = form.elements.password;
+  const error = document.getElementById("login-error");
+  const checkDesk = monitorDesktopLogin(error);
   const toggle = form.querySelector(".password-toggle");
   toggle.addEventListener("click", () => {
     const visible = password.type === "password";
@@ -45,27 +85,33 @@ function mountLogin() {
   });
   form.addEventListener("submit", async event => {
     event.preventDefault();
-    const error = document.getElementById("login-error");
     const submit = form.querySelector("[type=submit]");
     if (submit.disabled) return;
     submit.disabled = true;
     error.textContent = "";
     try {
+      if (checkDesk && !await checkDesk()) throw new Error(reopenDesk);
       let id;
       try { id = deviceId(); } catch { throw new Error("浏览器无法保存设备标识。请允许此站点使用本地存储，再重试。"); }
       const response = await fetch("/api/login", {
         method:"POST", mode:"same-origin", credentials:"same-origin", redirect:"error",
-        headers:{"Content-Type":"application/json"}, cache:"no-store",
+        headers:{"Content-Type":"application/json"}, cache:"no-store", signal:AbortSignal.timeout(45000),
         body:JSON.stringify({nickname:form.elements.nickname.value.trim(), account:form.elements.account.value.trim(),
           password:password.value, device_id:id, device_name:platformName + " 设备", platform:os, version:launcherVersion})
       });
+      if (!response.headers.get("Content-Type")?.includes("application/json")) {
+        throw new Error("登录服务返回了异常响应（HTTP " + response.status + "），请稍后重试。");
+      }
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "登录失败，请重试。");
       if (!result.user?.id) throw new Error("登录服务响应异常，请重试。");
       password.value = "";
       location.replace("/app/");
     } catch (failure) {
-      error.textContent = failure instanceof TypeError ? "无法连接登录服务，请检查网络后重试。" : failure.message;
+      if (failure instanceof TypeError || failure.name === "TimeoutError") {
+        if (checkDesk && !await checkDesk()) error.textContent = reopenDesk;
+        else error.textContent = failure.name === "TimeoutError" ? "登录请求超时，请稍后重试。" : "无法连接公司登录服务，请检查网络后重试。";
+      } else error.textContent = failure.message;
     } finally { submit.disabled = false; }
   });
 }
@@ -111,7 +157,12 @@ async function start() {
       return;
     }
   } catch { /* Only a validated HTTPS origin can receive visitors. */ }
-  note.textContent = "登录服务暂不可用。请稍后重试，或向管理员确认入口地址。";
+  if (pages) {
+    note.textContent = "这是 BIOS 公开入口。请用桌面上的「BIOS 网络工作台」或「BIOS Employee」登录。";
+    return;
+  }
+  note.textContent = isDesktopBridge() ? "暂时无法从本机工作台联系公司登录服务。" + desktopEntry :
+    "登录服务暂不可用。请稍后重试，或向管理员确认入口地址。";
   const retry = document.createElement("button");
   retry.type = "button"; retry.className = "secondary"; retry.textContent = "重新检查";
   retry.addEventListener("click", () => location.reload()); entry.replaceChildren(retry);
