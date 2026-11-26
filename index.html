@@ -41,7 +41,7 @@
           <span>本机系统</span><strong id="device-platform"></strong>
         </div>
       </div>
-      <footer>登录页版本 1.04</footer>
+      <footer>登录页版本 1.05</footer>
     </section>
   </main>
   <dialog id="help" aria-labelledby="help-title">
@@ -54,7 +54,17 @@
   <template id="login-template"><form id="login-form" method="post" action="/api/login">
     <div class="form-field">
       <label for="nickname">昵称</label>
-      <input id="nickname" name="nickname" placeholder="登记时使用的昵称" required maxlength="64" autocomplete="nickname">
+      <div class="nickname-lookup">
+        <input id="nickname" name="nickname" placeholder="登记时使用的昵称" required maxlength="128"
+               autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="recent-login" aria-expanded="false">
+        <div id="recent-login" role="listbox" aria-label="上次登录" hidden>
+          <div id="recent-identity" role="option" aria-selected="false">
+            <span class="recent-label">上次登录</span>
+            <strong class="recent-nickname"></strong>
+            <span class="recent-account"></span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="form-field">
       <label for="account">账号</label>

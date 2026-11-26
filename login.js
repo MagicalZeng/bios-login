@@ -68,11 +68,90 @@ function monitorDesktopLogin(error) {
   return check;
 }
 
+function loginIdentity(user) {
+  if (typeof user?.nickname !== "string" || typeof user?.account !== "string") return null;
+  const nickname = user.nickname.trim(), account = user.account.trim();
+  return nickname && [...nickname].length <= 64 && account && [...account].length <= 100 ? {nickname, account} : null;
+}
+
+function recentLogin(form) {
+  const field = form.elements.nickname, account = form.elements.account;
+  const list = form.querySelector("#recent-login"), option = form.querySelector("#recent-identity");
+  if (!list || !option) return () => {};
+  const key = "bios3.last-login";
+  const desktop = isDesktopBridge();
+  // A desktop launcher changes port. Only the authenticated native bridge can
+  // supply a durable identity there; old desktop builds get a tab-local hint.
+  let last = null, storage;
+  try {
+    storage = location.protocol === "https:" ? localStorage : sessionStorage;
+    last = loginIdentity(JSON.parse(storage.getItem(key)));
+  } catch { /* Private browsing and storage limits must not block login. */ }
+
+  function show(open) {
+    const prefix = field.value.trim().toLocaleLowerCase();
+    const visible = Boolean(open && last && last.nickname.toLocaleLowerCase().startsWith(prefix));
+    list.hidden = !visible;
+    field.setAttribute("aria-expanded", String(visible));
+    field.removeAttribute("aria-activedescendant");
+    option.setAttribute("aria-selected", "false");
+    if (visible) {
+      option.querySelector(".recent-nickname").textContent = last.nickname;
+      option.querySelector(".recent-account").textContent = last.account;
+    }
+  }
+  function choose() {
+    if (!last || list.hidden) return;
+    if (account.value !== last.account || field.value !== last.nickname) form.elements.password.value = "";
+    field.value = last.nickname;
+    account.value = last.account;
+    show(false);
+    form.elements.password.focus();
+  }
+  field.addEventListener("focus", () => show(true));
+  field.addEventListener("click", () => show(true));
+  field.addEventListener("input", () => show(true));
+  field.addEventListener("blur", () => show(false));
+  field.addEventListener("keydown", event => {
+    if (event.isComposing || event.keyCode === 229) return;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      show(true);
+      if (list.hidden) return;
+      event.preventDefault();
+      field.setAttribute("aria-activedescendant", option.id);
+      option.setAttribute("aria-selected", "true");
+    } else if (event.key === "Enter" && field.hasAttribute("aria-activedescendant")) {
+      event.preventDefault();
+      choose();
+    } else if (event.key === "Escape" && !list.hidden) {
+      event.preventDefault();
+      show(false);
+    }
+  });
+  option.addEventListener("mousedown", event => event.preventDefault());
+  option.addEventListener("click", choose);
+  if (desktop) {
+    fetch("/__bios/last-login", {mode:"same-origin", credentials:"omit", cache:"no-store",
+      redirect:"error", signal:AbortSignal.timeout(4000)}).then(async res => {
+      if (!res.ok) return;
+      last = loginIdentity(await res.json());
+      if (document.activeElement === field) show(true);
+    }).catch(() => { /* The rest of the form also works with older clients. */ });
+  }
+  return user => {
+    const identity = loginIdentity(user);
+    if (identity && storage) {
+      try { storage.setItem(key, JSON.stringify(identity)); } catch { /* Keep login working. */ }
+    }
+  };
+}
+
 function mountLogin() {
   note.textContent = "员工与管理员使用各自的账号登录。";
   entry.replaceChildren(document.getElementById("login-template").content.cloneNode(true));
   const form = document.getElementById("login-form");
   const password = form.elements.password;
+  const rememberLogin = recentLogin(form);
   const error = document.getElementById("login-error");
   const checkDesk = monitorDesktopLogin(error);
   const toggle = form.querySelector(".password-toggle");
@@ -90,13 +169,15 @@ function mountLogin() {
     submit.disabled = true;
     error.textContent = "";
     try {
+      const nickname = form.elements.nickname.value.trim();
+      if ([...nickname].length > 64) throw new Error("昵称最多 64 个字符。");
       if (checkDesk && !await checkDesk()) throw new Error(reopenDesk);
       let id;
       try { id = deviceId(); } catch { throw new Error("浏览器无法保存设备标识。请允许此站点使用本地存储，再重试。"); }
       const response = await fetch("/api/login", {
         method:"POST", mode:"same-origin", credentials:"same-origin", redirect:"error",
         headers:{"Content-Type":"application/json"}, cache:"no-store", signal:AbortSignal.timeout(45000),
-        body:JSON.stringify({nickname:form.elements.nickname.value.trim(), account:form.elements.account.value.trim(),
+        body:JSON.stringify({nickname, account:form.elements.account.value.trim(),
           password:password.value, device_id:id, device_name:platformName + " 设备", platform:os, version:launcherVersion})
       });
       if (!response.headers.get("Content-Type")?.includes("application/json")) {
@@ -105,6 +186,7 @@ function mountLogin() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "登录失败，请重试。");
       if (!result.user?.id) throw new Error("登录服务响应异常，请重试。");
+      rememberLogin(result.user);
       password.value = "";
       location.replace("/app/");
     } catch (failure) {
