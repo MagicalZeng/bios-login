@@ -30,7 +30,7 @@ function deviceId() {
   return id;
 }
 
-const desktopEntry = "请从桌面重新打开「BIOS 网络工作台」或「BIOS Employee」，在新窗口登录。";
+const desktopEntry = "请从桌面重新打开 BIOS 快捷方式，在新窗口登录。";
 const reopenDesk = "本机 BIOS 工作台已失去连接。" + desktopEntry;
 
 function isDesktopBridge() {
@@ -147,7 +147,7 @@ function recentLogin(form) {
 }
 
 function mountLogin() {
-  note.textContent = "员工与管理员使用各自的账号登录。";
+  note.textContent = "使用你的工作账号继续。";
   entry.replaceChildren(document.getElementById("login-template").content.cloneNode(true));
   const form = document.getElementById("login-form");
   const password = form.elements.password;
@@ -240,7 +240,7 @@ async function start() {
     }
   } catch { /* Only a validated HTTPS origin can receive visitors. */ }
   if (pages) {
-    note.textContent = "这是 BIOS 公开入口。请用桌面上的「BIOS 网络工作台」或「BIOS Employee」登录。";
+    note.textContent = "请从桌面上的「BIOS 网络工作台」或安装时创建的 BIOS 快捷方式登录。";
     return;
   }
   note.textContent = isDesktopBridge() ? "暂时无法从本机工作台联系公司登录服务。" + desktopEntry :

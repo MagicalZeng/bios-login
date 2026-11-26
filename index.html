@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
   <meta name="referrer" content="no-referrer">
-  <title>工作台登录 · BIOS 3.0</title>
+  <title>登录 BIOS · BIOS Collective</title>
   <link rel="icon" type="image/png" href="./bios-icon.png">
   <link rel="apple-touch-icon" href="./bios-icon.png">
   <link rel="stylesheet" href="./base.css">
@@ -17,10 +17,7 @@
   <main class="login-shell">
     <section class="intro" aria-labelledby="product-name">
       <bios-ribbons aria-hidden="true"></bios-ribbons>
-      <div class="intro-text">
-        <h1 id="product-name">员工访问门户</h1>
-        <p>在一个工作台管理你的设备、流量和客户端版本。</p>
-      </div>
+      <h1 id="product-name">你的工作空间</h1>
       <div class="intro-platforms" role="group" aria-label="支持的系统">
         <span><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#windows"/></svg>Windows</span>
         <span><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#mac"/></svg>macOS</span>
@@ -32,7 +29,7 @@
         <button type="button" class="quiet" id="help-open"><svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#help"/></svg>登录帮助</button>
       </div>
       <div class="credentials">
-        <h2 id="form-title">登录工作台</h2>
+        <h2 id="form-title">登录 BIOS</h2>
         <p id="entry-note" role="status">正在检查登录服务…</p>
         <div id="entry"></div>
         <noscript><p>请启用 JavaScript 后重新打开登录页面。</p></noscript>
@@ -41,14 +38,14 @@
           <span>本机系统</span><strong id="device-platform"></strong>
         </div>
       </div>
-      <footer>登录页版本 1.05</footer>
+      <footer>登录页版本 1.06</footer>
     </section>
   </main>
   <dialog id="help" aria-labelledby="help-title">
     <div class="dialog-head"><h2 id="help-title">登录帮助</h2><button type="button" class="quiet close-help" aria-label="关闭帮助">关闭</button></div>
-    <p>员工请填写超级管理员分配的昵称、账号和密码。昵称需与登记信息一致。</p>
-    <p>从桌面的「BIOS 网络工作台」或「BIOS Employee」进入。每次打开都会分配新的本机地址。旧标签页失去连接时，请重新打开桌面入口。</p>
-    <p>每个账号最多绑定两台设备。员工客户端会记住当前电脑；直接从网页登录时，清除浏览器资料或更换浏览器可能需要重新绑定。</p>
+    <p>首次登录时，请填写组织为你登记的昵称、账号和密码。以后点选上次登录的昵称，就可以同时填入账号。</p>
+    <p>请从桌面的「BIOS 网络工作台」或安装时创建的 BIOS 快捷方式进入。旧标签页失去连接时，重新打开快捷方式即可。</p>
+    <p>每个账号最多绑定两台设备。桌面客户端会记住这台电脑。直接从网页登录时，更换浏览器或清除浏览器数据可能需要重新绑定。</p>
     <p>名额已满时，请通过已登录设备在「我的设备」中解绑旧设备，或联系管理员。</p>
   </dialog>
   <template id="login-template"><form id="login-form" method="post" action="/api/login">
@@ -68,14 +65,14 @@
     </div>
     <div class="form-field">
       <label for="account">账号</label>
-      <input id="account" name="account" placeholder="公司分配的账号" required maxlength="100" autocomplete="username" autocapitalize="none" spellcheck="false">
+      <input id="account" name="account" placeholder="你的工作账号" required maxlength="100" autocomplete="username" autocapitalize="none" spellcheck="false">
     </div>
     <div class="form-field">
       <label for="password">密码</label>
       <div class="password-wrap"><input id="password" name="password" placeholder="输入密码" type="password" autocomplete="current-password" required maxlength="128"><button type="button" class="password-toggle" aria-label="显示密码" aria-pressed="false">显示</button></div>
     </div>
     <p class="error" id="login-error" role="alert"></p>
-    <button type="submit" class="primary full">登录工作台 <svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#arrow"/></svg></button>
+    <button type="submit" class="primary full">登录 <svg class="icon" aria-hidden="true"><use href="./interface-icons.svg#arrow"/></svg></button>
   </form></template>
 </body>
 </html>
