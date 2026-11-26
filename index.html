@@ -43,7 +43,7 @@
   </main>
   <dialog id="help" aria-labelledby="help-title">
     <div class="dialog-head"><h2 id="help-title">登录帮助</h2><button type="button" class="quiet close-help" aria-label="关闭帮助">关闭</button></div>
-    <p>首次登录时，请填写组织为你登记的昵称、账号和密码。以后点选上次登录的昵称，就可以同时填入账号。</p>
+    <p>首次登录时，输入管理员提供的账号和密码。若管理员留空昵称，请填写你自己的名字，以后用同一名字登录。</p>
     <p>请从桌面的「BIOS 网络工作台」或安装时创建的 BIOS 快捷方式进入。旧标签页失去连接时，重新打开快捷方式即可。</p>
     <p>每个账号最多绑定两台设备。桌面客户端会记住这台电脑。直接从网页登录时，更换浏览器或清除浏览器数据可能需要重新绑定。</p>
     <p>名额已满时，请通过已登录设备在「我的设备」中解绑旧设备，或联系管理员。</p>
@@ -52,7 +52,7 @@
     <div class="form-field">
       <label for="nickname">昵称</label>
       <div class="nickname-lookup">
-        <input id="nickname" name="nickname" placeholder="登记时使用的昵称" required maxlength="128"
+        <input id="nickname" name="nickname" placeholder="首次填写你的名字，之后使用同一昵称" required maxlength="64"
                autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="recent-login" aria-expanded="false">
         <div id="recent-login" role="listbox" aria-label="上次登录" hidden>
           <div id="recent-identity" role="option" aria-selected="false">
